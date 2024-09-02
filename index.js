@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 bodyParser = require('body-parser');
 const cors = require('cors');
 require('dotenv').config();
+import Usuario from './models/Contact';
 const uri = process.env.MONGODB_URI;
 
 const app = express();
