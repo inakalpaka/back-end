@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 bodyParser = require('body-parser');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 import Usuario from './models/Contact';
 const uri = process.env.MONGODB_URI;
@@ -16,49 +17,79 @@ mongoose.connect(uri)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error al conectar a MongoDB', err));
 
-const contactoSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  apellido: { type: String, required: true },
-  telefono: { type: String, required: true }
-});
-const Contacto = mongoose.model('Contacto', contactoSchema);
+app.post('/api/login', async (req, res) => {
+  const { nombre, contraseña } = req.body;
 
-app.get('/api/contactos', async (req, res) => {
-  try {
-    const contactos = await Contacto.find();
-    res.json(contactos);
-  } catch (error) {
-    console.error('Error al obtener contactos:', error);
-    res.status(500).send('Error al obtener contactos');
-  }
-});
+  //comprobar si existe el usuario
+  //comparar la contraseña con la contraseña hasheada
 
-app.post('/api/contactos', async (req, res) => {
-  const { nombre, apellido, telefono } = req.body;
-
-  if (!nombre || !apellido || !telefono) {
-    return res.status(400).send('Todos los campos son obligatorios');
-  }
-
-  const nuevoContacto = new Contacto({
-    nombre,
-    apellido,
-    telefono
-  });
 
   try {
-    await nuevoContacto.save();
-    res.status(201).send('Contacto agregado exitosamente');
+    res.status(201).send('Sesion iniciada');
   } catch (error) {
-    console.error('Error al agregar contacto:', error);
-    res.status(500).send('Error al agregar contacto');
+    console.error('Error iniciando sesion', error);
+    res.status(500).send('Error iniciar sesion');
   }
   /*
   Ejemplo de JSON para prueba:
   {
     "nombre": "Juansito",
-    "apellido": "Gomez",
-    "telefono": "1234567890"
+    "contraseña": "qwerty12345"
+  }
+  */
+});
+app.get('/api/contactos', async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    res.json(usuarios);
+  } catch (error) {
+    console.error('Error al obtener contactos:', error);
+    res.status(500).send('Error al obtener contactos');
+  }
+  const { nombre, contraseña } = req.body;
+
+  bcrypt.compare(contraseña, hash, function(err, result) {
+    // result == true
+});
+    const nuevoUsuario = new Usuario({
+      nombre,
+      hash
+    });
+
+    try {
+      await nuevoUsuario.save();
+      res.status(201).send('Contacto agregado exitosamente');
+    } catch (error) {
+      console.error('Error al agregar contacto:', error);
+      res.status(500).send('Error al agregar contacto');
+    }
+  });
+});
+
+app.post('/api/registrarse', async (req, res) => {
+  const { nombre, contraseña } = req.body;
+
+  bcrypt.hash(contraseña, 10, async (err, hash) => {
+
+    const nuevoUsuario = new Usuario({
+      nombre,
+      hash
+    });
+
+    try {
+      await nuevoUsuario.save();
+      res.status(201).send('Contacto agregado exitosamente');
+    } catch (error) {
+      console.error('Error al agregar contacto:', error);
+      res.status(500).send('Error al agregar contacto');
+    }
+  });
+
+  /*
+  Ejemplo de JSON para prueba:
+  {
+    "nombre": "Juansito",
+    "contraseña": "qwerty12345"
   }
   */
 });
