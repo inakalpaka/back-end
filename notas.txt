@@ -1,0 +1,3 @@
+cors: Permite que tu servidor acepte solicitudes desde diferentes orígenes (dominios), lo que es esencial para las aplicaciones web modernas que tienen frontend y backend separados.
+
+body-parser: Analiza el cuerpo de las solicitudes HTTP para que tu aplicación pueda trabajar con los datos de manera sencilla (por ejemplo, datos JSON o formularios).

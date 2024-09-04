@@ -4,9 +4,9 @@ bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
-import Usuario from './models/Contact';
+import Usuario from './models/Contact.js';
 const uri = process.env.MONGODB_URI;
-
+//comit
 const app = express();
 const PORT = 3000;
 
@@ -30,7 +30,7 @@ app.post('/api/iniciarSesion', async (req, res) => {
       res.status(201).send('sesion iniciada');
     } else {
       console.error('Error al iniciar sesion, la contraseña no coiside');
-      res.status(500).send('Error al iniciar sesion');
+      res.status(500).send('Error al iniciar sesion', err);
     }
   });
 });
