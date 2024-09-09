@@ -4,7 +4,8 @@ bodyParser = require('body-parser');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 require('dotenv').config();
-import Usuario from './models/Contact.js';
+import Usuario from './models/Usuario.js';
+import Contacto from './models/Contacto.js';
 const uri = process.env.MONGODB_URI;
 //comit
 const app = express();
@@ -22,17 +23,19 @@ app.post('/api/iniciarSesion', async (req, res) => {
   try {
     const elUsuario = await Usuario.findOne({ nombre: nombre });
   } catch (error) {
-    console.error('Error al obtener contactos:', error);
-    res.status(500).send('Error al obtener contactos');
+    console.error('Error al iniciar sesion', error);
+    res.status(500).send('Error al iniciar sesion');
   }
   bcrypt.compare(contraseña, elUsuario.contraseña, function (err, result) {
     if (result == true) {
-      res.status(201).send('sesion iniciada');
+      res.status(301).redirect('/dashboard');
     } else {
-      console.error('Error al iniciar sesion, la contraseña no coiside');
-      res.status(500).send('Error al iniciar sesion', err);
+      res.status(301).redirect('/api/iniciarSesion');
     }
   });
+});
+app.get('/dashboard', (req, res) => {
+  res.send('Bienvenido al dashboard');
 });
 
 app.post('/api/registrarse', async (req, res) => {
@@ -47,10 +50,10 @@ app.post('/api/registrarse', async (req, res) => {
 
     try {
       await nuevoUsuario.save();
-      res.status(201).send('Contacto agregado exitosamente');
+      res.status(201).send('registro exitoso');
     } catch (error) {
-      console.error('Error al agregar contacto:', error);
-      res.status(500).send('Error al agregar contacto');
+      console.error('Error al registrarse', error);
+      res.status(500).send('Error al registrarse');
     }
   });
 
@@ -63,6 +66,32 @@ app.post('/api/registrarse', async (req, res) => {
   */
 });
 
+app.post('api/nuevo/contacto', async (req, res) => {
+  const { nombreContacto, telefono } = req.body;
+
+  const nuevoContacto = new Contacto({
+    nombreContacto,
+    telefono
+  });
+
+  try {
+    await nuevoContacto.save();
+    res.status(201).send('Contacto agregado exitosamente');
+  } catch (error) {
+    console.error('Error al agregar contacto:', error);
+    res.status(500).send('Error al agregar contacto');
+  }
+});
+
+app.get('/api/contactos', async (req, res) => {
+  try {
+    const contactos = await Contacto.find(); 
+    res.status(200).json(contactos);
+  } catch (error) {
+    console.error('Error al obtener contactos:', error);
+    res.status(500).send('Error al obtener contactos');
+  }
+});
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
