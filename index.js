@@ -1,12 +1,19 @@
-const express = require('express');
-const mongoose = require('mongoose');
-bodyParser = require('body-parser');
-const cors = require('cors');
-const bcrypt = require('bcrypt');
-require('dotenv').config();
-import Usuario from './models/Usuario.js';
-import Contacto from './models/Contacto.js';
-const uri = process.env.MONGODB_URI;
+import express from 'express';
+//const express = require('express');
+import mongoose from 'mongoose';
+//const mongoose = require('mongoose');
+import bodyParser from 'body-parser';
+//bodyParser = require('body-parser');
+import cors from 'cors';
+//const cors = require('cors');
+import bcrypt from 'bcrypt';
+//const bcrypt = require('bcrypt');
+import dotenv from 'dotenv';
+//require('dotenv').config();
+import Usuario from './models/Usuario.cjs';
+import Contacto from './models/Contacto.cjs';
+const uri = "mongodb+srv://inaki:anS)94pE_MVE%40Kx@clusterdecontactos.r5jnh.mongodb.net/ClusterDeContactos?retryWrites=true&w=majority&appName=ClusterDeContactos";
+//const uri = process.env.MONGODB_URI;
 //comit
 const app = express();
 const PORT = 3000;
@@ -67,10 +74,10 @@ app.post('/api/registrarse', async (req, res) => {
 });
 
 app.post('api/nuevo/contacto', async (req, res) => {
-  const { nombreContacto, telefono } = req.body;
+  const { nombre, telefono } = req.body;
 
   const nuevoContacto = new Contacto({
-    nombreContacto,
+    nombre,
     telefono
   });
 
@@ -85,7 +92,7 @@ app.post('api/nuevo/contacto', async (req, res) => {
 
 app.get('/api/contactos', async (req, res) => {
   try {
-    const contactos = await Contacto.find(); 
+    const contactos = await Contacto.find();
     res.status(200).json(contactos);
   } catch (error) {
     console.error('Error al obtener contactos:', error);
