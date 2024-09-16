@@ -73,7 +73,7 @@ app.post('/api/registrarse', async (req, res) => {
   */
 });
 
-app.post('api/nuevo/contacto', async (req, res) => {
+app.post('/api/nuevo/contacto', async (req, res) => {
   const { nombre, telefono } = req.body;
 
   const nuevoContacto = new Contacto({
